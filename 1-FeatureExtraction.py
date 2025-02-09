@@ -1,6 +1,9 @@
 from datetime import datetime
 import numpy as np 
+import pandas  as pd 
 import os
+import matplotlib.pyplot as plt
+import seaborn as sns   
 # from FeatureExtract import path_check
 
 # ------------------------------------------ STEP TWO 
@@ -104,7 +107,7 @@ def log_feature(file_input):
 
     file_input: logon2.csv of users
     """
-    # file_output=open(file_out,'wt')
+     
 
     files_in=open(file_input,'r')
     data_dicts={}
@@ -120,14 +123,14 @@ def log_feature(file_input):
             weekday=find_weekday(week_time)
             # ----- The total number of logon machines 
             computer_number=1
-            # ------------ 第一台机器 在一天之内 (First Machine, In One day )--------------
-            # ----- 登陆的机器编号 (the id of the Machine)
+            # ------------     (First Machine, In One day )--------------
+            # -----   (the id of the Machine)
             computer_id=1
-            # ----- 该机器一天内登陆的总次数 (number of logon in One day  )
+            # -----   (number of logon in One day  )
             numebr_logon=line.count('Logon')
             # 
             line=line.split(' ; ')
-            # ----- 第一次登陆具体时间 (the firt time of logon)
+            # -----   (the firt time of logon)
             first_logon=line[0].split(',')[1] # format: 07:20:00
             first_logoff=line[1].split(',')[1]
             first_logon_time=datetime.strptime(first_logon,'%H:%M:%S') 
@@ -138,7 +141,7 @@ def log_feature(file_input):
             first_logoff_minutes=first_logoff_time.minute
             # print(first_logoff_hour)
 
-            # ----- 最后一次登陆具体时间 (the last time of logon)
+            # -----   (the last time of logon)
             last_logon=line[-2].split(',')[1]
             last_logoff=line[-1].split(',')[1]
             last_logon_time=datetime.strptime(last_logon,'%H:%M:%S') 
@@ -147,13 +150,8 @@ def log_feature(file_input):
             last_logon_minutes=last_logon_time.minute
             last_logoff_hour=last_logoff_time.hour
             last_logoff_minutes=last_logoff_time.minute
-            # print(last_logoff_hour)
-            # ------ 第一台机器结束 (End for the information of the firt machine)-------------------
-
-            # TODO--------------------------- 第二台机器 (the second machine)---------------
-            # TODO--------------------------- 第三台机器 (the third machine)---------------
-            # TODO etc...
-            # ----- 登陆的总时长 (最后一次退出时间减去第一次登陆时间) (the lasting time for a logon = last_logoff - first_logon)
+        
+            # -----    (the lasting time for a logon = last_logoff - first_logon)
             online_time=count_time(first_logon,last_logoff)
             data_list=[numebr_logon,first_logon_hour,first_logon_minutes,first_logoff_hour,first_logoff_minutes,last_logon_hour,last_logon_minutes,last_logoff_hour,last_logoff_minutes,online_time]
             data_dicts[week_time]=data_list
@@ -175,40 +173,16 @@ def device_feature(file_input,log_dicts):
             line=line.strip()
             time_line=line.split(',')
             week_time=time_line[0] # format: 01/04/2010
-            # ----- 星期几 (week)
+            # -----   (week)
             weekday=find_weekday(week_time)
-            # ----- 使用U盘的机器的总数 (number of machines that have been connected with devices)
+            # -----   (number of machines that have been connected with devices)
             computer_number=1
-            # ----------------------- 第一台机器 在一天之内 (the firt machine, in one day)---------------------------
-            # ----- 使用U盘的机器编号 (the id of the machine)
+            # -----------------------  (the firt machine, in one day)---------------------------
+            # -----   (the id of the machine)
             computer_id=1
-            # ----- 该机器一天内使用U盘的总次数 (how many times in using devices in this machine)
+            # -----   (how many times in using devices in this machine)
             numebr_use_device=line.count('Connect')
-            # 
-            # line=line.split(' ; ')
-            # TODO----- 暂时不考虑U盘使用时间 (ignore the lasting time for devices)
-            # TODO-----如果是奇数条数，那么说明存在未弹出U盘直接关机的情况 (there is a situation that the machine may be shut down with connecting with a device if the numeber of times in using devices is an odd number)
-            # TODO-----第一次使用U盘的具体时间 (the first time for using devices)
-            # first_logon=line[0].split(',')[1] # format: 07:20:00
-            # first_logoff=line[1].split(',')[1]
-            # first_logon_time=datetime.strptime(first_logon,'%H:%M:%S') 
-            # first_logoff_time=datetime.strptime(first_logoff,'%H:%M:%S')
-            # first_logon_hour=first_logon_time.hour
-            # first_logon_minutes=first_logon_time.minute
-            # first_logoff_hour=first_logoff_time.hour
-            # first_logoff_minutes=first_logoff_time.minute
-            # print(first_logoff_hour)
-            # TODO-----最后一次登陆具体时间 (the last time for using devices)
-            # last_logon=line[-2].split(',')[1]
-            # last_logoff=line[-1].split(',')[1]
-            # last_logon_time=datetime.strptime(last_logon,'%H:%M:%S') 
-            # last_logoff_time=datetime.strptime(last_logoff,'%H:%M:%S')
-            # last_logon_hour=last_logon_time.hour
-            # last_logon_minutes=last_logon_time.minute
-            # last_logoff_hour=last_logoff_time.hour
-            # last_logoff_minutes=last_logoff_time.minute
-            # TODO-----每次使用U盘的时间  (the lasting time for every time of using devices )
-
+           
             data_device=[numebr_use_device]
 
             log_dicts[week_time]=log_dicts[week_time]+data_device
@@ -229,11 +203,11 @@ def email_feature(file_input,http_dicts):
             line=line.strip()
             time_line=line.split(',')
             week_time=time_line[0] # format: 01/04/2010
-            # ----- 星期几 (Week)
+            # -----   (Week)
             weekday=find_weekday(week_time)
             #
             line=line.split(' ; ')
-            # ----- 发送邮件总次数 (number of emailing)：
+            # -----   (number of emailing)：
             Number_email=len(line)
             #
             data_email=[]
@@ -245,11 +219,11 @@ def email_feature(file_input,http_dicts):
                     # print(string)
                     if '@' in string and (string not in eamil_set):
                         eamil_set.append(string)
-                # ----- 每次接收邮件的人数：
+                # -----  ：
                 Number_receiver=len(eamil_set)-1
-                # 发件人邮箱：
+                #  ：
                 source_email=eamil_set[-1]
-                # ----- 每次发件人邮箱是私人还是公司邮箱
+                # -----  
                 if '@dtaa.com' in source_email:
                     source_email_type=0
                 else:
@@ -296,7 +270,7 @@ def email_feature(file_input,http_dicts):
 # TODO ----------
 def file_feature(file_input):
     """ file features 
-    暂且不考虑，因为个人电脑上存放的不应该是私密数据;另外，数据中也几乎没有体现出与恶意用户相关的部分。(this part is not considered now because of the lack of related data )
+     (this part is not considered now because of the lack of related data )
     file_input: file2.csv
     """
     files_in=open(file_input,'r')
@@ -577,7 +551,7 @@ def sequence_code(sequence_files_in,sequence_code_save,sequence_len):
 # --------- preprocessing (logon.csv, device.csv ...)
 def pre_step():
     """
-    日志数据预处理 data preprocessing 
+      data preprocessing 
     """
     path='Data/'+USERNAME+'/new'
     path_check(path)
@@ -592,7 +566,51 @@ def pre_step():
         file_out='Data/'+USERNAME+'/new'+new_filename[type_num]
         combine_time_log(file_in,file_out)
 # # ---------------------------------------------------------------
+def create_bar_plot(activity_type, ylabel, color):
+    plt.figure(figsize=(10, 5))
+    sns.barplot(x=list(activity_counts[activity_type].keys()), 
+                y=list(activity_counts[activity_type].values()), 
+                palette=color)
+    plt.title(f"{activity_type.capitalize()} Activity per User")
+    plt.xlabel("User")
+    plt.ylabel(ylabel)
+    plt.grid(axis="y")
+    plt.show()
 
+# ✅ Function to create pie charts
+def create_pie_chart(activity_type):
+    plt.figure(figsize=(7, 7))
+    data = activity_counts[activity_type]
+    plt.pie(data.values(), labels=data.keys(), autopct='%1.1f%%', startangle=140, colors=sns.color_palette("pastel"))
+    plt.title(f"{activity_type.capitalize()} Activity Distribution")
+    plt.show()
+
+# ✅ Function to create heatmaps
+def create_heatmap():
+    df = pd.DataFrame(activity_counts)
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(df.T, annot=True, cmap="coolwarm", fmt="d")
+    plt.title("User Activity Heatmap")
+    plt.xlabel("Users")
+    plt.ylabel("Activity Type")
+    plt.show()
+
+# ✅ Function to create histograms for logon times
+def plot_login_histogram():
+    plt.figure(figsize=(10, 5))
+    
+    for user in user_folders:
+        logon_file = os.path.join(base_path, user, "new", "logon.csv")
+        if os.path.exists(logon_file):
+            df = pd.read_csv(logon_file)
+            times = pd.to_datetime(df.iloc[:, 1], format="%H:%M:%S").dt.hour
+            sns.histplot(times, bins=24, kde=True, label=user, alpha=0.6)
+    
+    plt.title("Logon Time Distribution")
+    plt.xlabel("Hour of the Day")
+    plt.ylabel("Frequency")
+    plt.legend()
+    plt.show()
 # ----------- feature generating 
 def Feature_generate(file_in,file2_in,file3_in,file4_in):
     """
@@ -657,19 +675,30 @@ def Sequence_generate(file_in,file2_in,file3_in,file4_in):
 
     # --------------------------
 
-
+def create_bar_plot(activity_type, ylabel, color):
+    plt.figure(figsize=(10, 5))
+    sns.barplot(x=list(activity_counts[activity_type].keys()), 
+                y=list(activity_counts[activity_type].values()), 
+                palette=color)
+    plt.title(f"{activity_type.capitalize()} Activity per User")
+    plt.xlabel("User")
+    plt.ylabel(ylabel)
+    plt.grid(axis="y")
+    plt.show()
 if __name__ == "__main__":
     # EDB0714--PC-6103  HXL0968--PC-0623  TNM0961--PC-2030
     # user_sets=['HXL0968'] #'HXL0968'
     # MACHINE='PC-0623'
     # for username in user_sets:
     #     USERNAME=username
+# Set base directory where the user folders are located
+
     user_sets={'EDB0714':'PC-6103','HXL0968':'PC-0623','TNM0961':'PC-2030'}
     for username,machine in user_sets.items():
         USERNAME=username
         MACHINE=machine
         # print(USERNAME)
-        file_in='Data/'+USERNAME+'/new/logon2.csv'
+        file_in ='Data/'+USERNAME+'/new/logon2.csv'
         file2_in='Data/'+USERNAME+'/new/device2.csv'
         file3_in='Data/'+USERNAME+'/new/email2.csv'
         file4_in='Data/'+USERNAME+'/new/http2.csv'
@@ -680,3 +709,55 @@ if __name__ == "__main__":
         Feature_generate(file_in,file2_in,file3_in,file4_in)
         # generate the sequence data for daily action sequences.
         Sequence_generate(file_in,file2_in,file3_in,file4_in)
+
+
+
+    base_path = "Data"
+
+    # Define user folders
+    user_folders = ["EDB0714", "HXL0968", "TNM0961"]
+
+    # Initialize dictionaries to store data counts
+    activity_counts = {
+        "logon": {},
+        "device": {},
+        "email": {},
+        "file": {},
+        "http": {}
+    }
+    for user in user_folders:
+     user_path = os.path.join(base_path, user, "new")
+    # Generate bar plots for each activity type 
+    # Define file paths for different activity types
+     files = {
+        "logon": os.path.join(user_path, "logon.csv"),
+        "device": os.path.join(user_path, "device.csv"),
+        "email": os.path.join(user_path, "email.csv"),
+        "file": os.path.join(user_path, "file.csv"),
+        "http": os.path.join(user_path, "http.csv")
+     }
+    
+    # Count occurrences in each CSV file
+     for key, file in files.items():
+        if os.path.exists(file):
+            activity_counts[key][user] = sum(1 for line in open(file)) - 1  # Excluding header
+        else:
+            activity_counts[key][user] = 0  # If file doesn't exist, set count to 0
+
+
+
+
+   
+
+    create_bar_plot("logon", "Logon Events", "Blues_r")
+    create_bar_plot("device", "Device Connections", "Greens_r")
+    create_bar_plot("email", "Emails Sent/Received", "Purples_r")
+    create_bar_plot("file", "Files Accessed", "Oranges_r")
+    create_bar_plot("http", "Websites Visited", "Reds_r")
+
+    create_pie_chart("logon")
+    create_pie_chart("device")
+    create_pie_chart("email")
+
+    create_heatmap()
+    plot_login_histogram()
