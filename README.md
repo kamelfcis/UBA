@@ -1,8 +1,7 @@
 # User-and-Entity-Behavior-Analytics-UEBA
 User and Entity Behavior Analytics by deep learning.  
 Detecting users anomalous behaviors from users' daily records. 
-
-内部威胁检测
+ 
 ## Details
 All data were extracted from **CERT/R4.2** &nbsp;(*ftp://ftp.sei.cmu.edu/pub/cert-data*)
 
